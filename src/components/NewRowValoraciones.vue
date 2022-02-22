@@ -3,21 +3,47 @@
                                        
                                         <div class="media-body">
                                              <img src="../assets/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
-                                            <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
+                                            <h6 @click="goPerfil()">{{user.name}}<small> - <i>{{new Date(mensaje.created_at).toLocaleTimeString()}}</i></small></h6>
                                             <div class="text-primary mb-2">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star-half-alt"></i>
-                                                <i class="far fa-star"></i>
+                                                 <small class="fas fa-star" v-for="valoration in mensaje.valoracion" :key="valoration"></small>
+                                                  <small class="bi bi-star-half" v-if="!entero"></small>
+
                                             </div>
-                                            <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
+                                            <p>{{mensaje.comentario}}</p>
                                         </div>
                                     </div>
 </template>
 
 <script>
+import Api from '../Api'
 export default {
-    name:'NewRowValoraciones'
+    name:'NewRowValoraciones',
+    data(){
+        return{
+            user:{},
+            entero: true,
+            num: ''
+        }
+    },
+    methods:{
+        goPerfil(){
+            console.log(this.user.id)
+            this.$router.replace('/vendorDetails/'+ this.user.id)
+        }
+    },
+    props:['mensaje'],
+    async mounted(){
+            try {
+                let response = await Api.users.getOne(this.mensaje.valorador_id)
+                this.user = response.data
+                if(this.mensaje.valoracion % 1 != 0 ){
+                    this.entero = false
+                    let num = Math.floor(this.mensaje.valoracion)
+                    this.mensaje.valoracion = num
+                }
+            } catch (error) {
+                console.error(error)
+            }
+    }
 }
 </script>

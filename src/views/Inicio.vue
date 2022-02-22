@@ -27,7 +27,19 @@
         <span class="bg-secondary pr-3">Categorías</span>
       </h2>
       <div class="row px-xl-5 pb-3">
-        <categoria v-for="categoria in categorias" :key="categoria.id" :categoria="categoria" ></categoria>
+            <div v-for="categoria in categorias" :key="categoria.id" :categoria="categoria" class="col-lg-4 col-md-4 col-sm-6 pb-1" v-scrollanimation >
+                <a class="text-decoration-none" @click="goToProducts(categoria.id)">
+                    <div class="cat-item d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px; display:flex;">
+                            <img class="img-fluid" :src="require('@/assets/img/categorias/' + (categoria.id+'.png' || 'default.jpg'))" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>{{categoria.nombre}}</h6>
+                            <small class="text-body">{{conteo[categoria.id-1]}} Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
       </div>
     </div>
     <!-- Categories End -->
@@ -52,7 +64,6 @@
 <script>
 
 
-import Categoria from "../components/Categoria.vue";
 import MenuMitad from "../components/MenuMitad.vue";
 import NewimageCarrusel from "../components/NewimageCarrusel.vue";
 import ProductoPrincipal from "../components/ProductoPrincipal.vue";
@@ -63,15 +74,23 @@ export default {
       products :[],
     }
   },
+  methods:{
+        goToProducts(id){
+            this.$store.commit('setFiltrosCategoria',id)
+            this.$router.push('/shop')
+        },
+  },
   computed:{
     categorias(){
-      return this.$store.state.categories
+      return this.$store.state.categories.category
+    },
+    conteo(){
+      return this.$store.state.categories.conteo
     }
   },
   components: {
     NewimageCarrusel,
     MenuMitad,
-    Categoria,
     ProductoPrincipal,
   },
   async mounted(){

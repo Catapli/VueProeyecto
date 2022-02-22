@@ -1,5 +1,6 @@
 <template>
 <div>
+<div>
     <!-- Breadcrumb Start -->
     <div class="container-fluid">
         <div class="row px-xl-5">
@@ -74,6 +75,7 @@
        
     </div>
 </div>
+</div>
     
 </template>
 
@@ -90,7 +92,7 @@ export default {
             existencias: false,
             search:'',
             elementosPorPagina:24,
-            paginaActual: 1
+            paginaActual: 1,
         }
     },
     methods:{
@@ -106,10 +108,20 @@ export default {
                 console.error(error)
             }
         },
-        searching(){
+        async searching(){
             this.resetFilters()
-            
-            alert(this.search)
+            try {
+                let response = await Api.products.search(this.search)
+                this.products = []
+                 this.products = response.data
+                 if(this.products.data === undefined ){
+                     this.existencias = true
+                 }else{
+                     this.existencias = false
+                 }
+            } catch (error) {
+                console.error(error)
+            }
         },
         resetFilters(){
               this.$store.commit('setFiltrosPrecio','')
@@ -191,7 +203,12 @@ export default {
         ProductoPrincipal,
     },
     async mounted(){
-        this.getDataPagina(1)
+        if(this.$store.state.filtro.categoria != ''){
+            this.checkFiltros()
+        }else{
+            this.getDataPagina(1)
+        }
+        
     },
 }
 </script>

@@ -23,7 +23,9 @@
                 <div class="d-inline-flex align-items-center">
                     <div class="btn-group" v-if="loged">
                          <button class="dropdown-item" @click="goProfile" type="button" >
-                             <img :src="this.$store.state.user.img" height="50px" width="50px" style="border-radius:50%;">
+
+                             <img :src="this.$store.state.user.img" v-if="imagen" height="50px" width="50px" style="border-radius:50%;">
+                             <img src="../assets/img/user.jpg" v-else height="50px" width="50px" style="border-radius:50%;">
                              {{this.$store.state.user.name}}
                          </button>
                         <button class="dropdown-item" @click="logOut" type="button" >Log Out</button>
@@ -98,6 +100,9 @@ export default {
   computed:{
       loged(){
            return !!this.$store.state.token
+      },
+      imagen(){
+           return !!this.$store.state.user.img
       }
   },
     mounted(){

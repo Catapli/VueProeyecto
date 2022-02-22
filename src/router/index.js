@@ -14,6 +14,7 @@ import Compras from '../views/Compras.vue'
 import Valoraciones from '../views/Valoraciones.vue'
 import Login from '../views/Login.vue'
 import Registro from '../views/Registro.vue'
+import Valorar from '../views/Valorar.vue'
 import PublicarProduct from '../views/PublicarProduct.vue'
 
 Vue.use(VueRouter)
@@ -73,6 +74,11 @@ const routes = [
     component: Details
   },
   {
+    path: '/valorar/:id',
+    name: 'Valorar',
+    component: Valorar
+  },
+  {
     path: '/buy/:id',
     name: 'buyProduct',
     component: Buy
@@ -98,9 +104,10 @@ const routes = [
       name: '404',
     }},
     {
-      path: '/vendorDetails',
+      path: '/vendorDetails/:id',
       name: 'VendorDetails',
       component: VendorDetails,
+      props: true
     },
     {
       path: '/profile',

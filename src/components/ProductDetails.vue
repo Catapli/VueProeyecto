@@ -1,8 +1,13 @@
 <template>
 <div>
     
-<div class="container-fluid pb-5">
-        <div class="row px-xl-5">
+<div class="container-fluid px-xl-5">
+    <div id="contenedor_carga" v-if="charge" >
+    <div id="carga"></div>
+  </div>
+
+    <div v-else>
+         <div class="row px-xl-5" >
             <div class="col-lg-5 mb-30" v-scrollanimation>
                 <div id="product-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner bg-light">
@@ -49,8 +54,8 @@
                     <div class="d-flex pt-2"  style="justify-content:center;">
                         <strong class="text-dark mr-2">Vendedor:</strong>
                         <div class="d-inline-flex">
-                            <a class="text-dark px-2">
-                                <router-link to="/vendorDetails">{{user.name}}</router-link>
+                            <a @click="goDetails"  class=" px-2">
+                                {{user.name}}
                             </a>
                             
                         </div>
@@ -62,15 +67,15 @@
             <div class="col">
                 <div class="bg-light p-30">
                     <div class="nav nav-tabs mb-4">
-                        <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Descripción</a>
-                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2">Reseñas</a>
+                        <a class="nav-item nav-link text-dark" v-bind:class="{active: lista}" @click="changeLista" id="tab-pane-1" data-toggle="tab">Descripción</a>
+                        <a class="nav-item nav-link text-dark" v-bind:class="{active: !lista}" @click="changeLista" id="tab-pane-2" data-toggle="tab">Reseñas</a>
                     </div>
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="tab-pane-1">
+                        <div v-if="lista">
                             <h4 class="mb-3">Descripción del Producto </h4>
                             <p>{{producto.descripcion}}</p>
                         </div>
-                        <div class="tab-pane fade" id="tab-pane-2">
+                        <div v-else class="active" >
                             <div class="row">
                                 <div class="col-md-6">
                                     <h4 class="mb-4">1 review for {{producto.nombre}}</h4>
@@ -127,6 +132,8 @@
             </div>
         </div>
     </div>
+       
+    </div>
 </div>
     
             
@@ -140,14 +147,27 @@ export default {
             user: {},
             valoracionUser : [],
             producto: {},
-            entero: true
+            entero: true,
+            charge: true,
+            lista: true
         }
     },
     name:'ProductDetails',
     props:['producto_id'],
     methods:{
+        changeLista(){
+            if(this.lista){
+                this.lista = false
+                document.getElementById("tab-pane-2").className += "active";
+            }else{
+                this.lista = true
+            }
+        },
         goBuy(){
-            this.$router.push('/buy')
+            this.$router.push('/buy/'+this.producto_id)
+        },
+        goDetails(){
+            this.$router.push('/vendorDetails/'+this.user.id)
         },
         async getUser(){
             try {
@@ -175,6 +195,8 @@ export default {
                     this.entero = false
                     let num = Math.floor(valoraciones.data.average)
                     this.valoracionUser.average = num
+                }else{
+                    this.valoracionUser.average = valoraciones.data
                 }
             } catch (error) {
                 console.error(error)
@@ -183,13 +205,16 @@ export default {
     },
     async mounted(){
         await this.getProduct()
+        this.charge = false
     },
     
 }
 </script>
 
 
-<style scoped>
+<style scoped >
+
+
 .before-enter{
   opacity: 0;
   transform: translateX(-150px);
@@ -202,4 +227,6 @@ export default {
     transform:  translateX(0px);
 
 }
+
+
 </style>

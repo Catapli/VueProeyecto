@@ -4,7 +4,9 @@
 <div class="container-fluid pb-5">
         <div class="row px-xl-5" style="justify-content:space-around;">
             <div class="col-lg-3 mb-30 img" >
-                    <img :src="this.$store.state.user.img" height="60%"  alt="Image" style="border-radius: 50%;" v-scrollanimation>
+                    <img :src="this.$store.state.user.img" v-if="imagen" height="60%"  alt="Image" style="border-radius:50%;" v-scrollanimation>
+                    <img src="../assets/img/user.jpg" v-else height="60%"  alt="Image" style="border-radius:50%;" v-scrollanimation>
+                    
             </div>
 
             <div class="col-lg-7 h-auto mb-30">
@@ -61,6 +63,11 @@ export default {
         goCompras(){
             this.$router.push('/compras')
         }
+    },
+    computed:{
+        imagen(){
+           return !!this.$store.state.user.img
+      }
     },
     async mounted(){
         try {

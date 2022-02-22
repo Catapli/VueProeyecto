@@ -46,7 +46,6 @@ import TopBar from './components/TopBar.vue';
 export default {
   components: { TopBar, NavBar,FooterBottom },
    async mounted(){
-    navigator.geolocation.getCurrentLocation
     this.$store.dispatch('getAllCategories')
     if(localStorage.getItem('token')){
       try {

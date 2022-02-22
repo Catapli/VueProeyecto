@@ -14,7 +14,8 @@ export default new Vuex.Store({
       precio:''
     },
     user:{},
-    token:''
+    token:'',
+    ubiUser:{}
   },
   mutations: {
     getCategories(state,payload){
@@ -38,6 +39,12 @@ export default new Vuex.Store({
       localStorage.token = token.token
       localStorage.idUser = token.usuario.id
     },
+    registerUser(state, token) {
+      state.token = token.token
+      state.user = token.user
+      localStorage.token = token.token
+      localStorage.idUser = token.user.id
+    },
     logoutUser(state) {
       state.token = null
       localStorage.removeItem('token')
@@ -51,6 +58,7 @@ export default new Vuex.Store({
     getAllCategories: async (context) => {
       try{
         let response = await Api.categories.getAll()
+        console.log(response.data)
         context.commit('getCategories',response.data)
       }catch(error){
         console.error(error)
@@ -66,7 +74,28 @@ export default new Vuex.Store({
       } catch (error) {
         alert(error.message)
       }
-  }
+  },
+  async register(context, user) {
+    try {
+      let response = await Api.users.register(user)
+      if (response.status == 200) {
+        console.log(response)
+        context.commit('registerUser', response.data)
+        router.push('/')
+      }
+    } catch (error) {
+      alert(error.message)
+    }
+  },
+  async newProduct(context,product) {
+    try {
+      await Api.products.create(product)
+      router.push('/')
+      
+    } catch (error) {
+      alert(error.message)
+    }
+  },
   },
   modules: {
   },

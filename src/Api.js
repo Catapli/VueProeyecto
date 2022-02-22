@@ -3,17 +3,25 @@ import store from './store'
 
 
 const baseURL = "http://batoipop.my/api";
+axios.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('token')}`}
 
 const products = {
     getAllByLimit: async (limite) => await axios.get(`${baseURL}/products?limite=${limite}`),
     getAllByCategoria: async (idCategory) => await axios.get(`${baseURL}/products?categoria=${idCategory}`),
-    countProductsByCategoria: async (idCategory) => await axios.get(`${baseURL}/products?count=${idCategory}`),
+    productsByUser: async (idUser) => await axios.get(`${baseURL}/products?userId=${idUser}`),
+    comprasByUser: async (idUser) => await axios.get(`${baseURL}/products?compradorId=${idUser}`),
+    countProductsByCategoria: async (idCategory) => await axios.get(`${baseURL}/products?countCategory=${idCategory}`),
+    countProductsByEtiqueta: async (idEtiqueta) => await axios.get(`${baseURL}/products?countEtiqueta=${idEtiqueta}`),
+    countProductsByPrecio: async (precio) => await axios.get(`${baseURL}/products?countPrecio=${precio}`),
     getAll: async () => await axios.get(`${baseURL}/products`),
     paginate: async (page) => await axios.get(`${baseURL}/products?page=`+page),
     getOne: async (id) => await axios.get(`${baseURL}/products/${id}`),
-    create: (item) => axios.post(`${baseURL}/autores`, item),
-    modify: (item) => axios.put(`${baseURL}/products/${item.id}`, item),
+    create: async (item) => {
+        await axios.post(`${baseURL}/newProduct`, item)
+       },
+    modify: (item) => axios.put(`${baseURL}/comprar`,item),
     delete: (id) => axios.delete(`${baseURL}/autores/${id}`),
+    search:(nombre) => axios.get(`${baseURL}/products?search=${nombre}`),
     toogleDone: (item) => axios.put(`${baseURL}/categories/${item.id}`, {
         id: item.id,
         title: item.title, 
@@ -48,11 +56,20 @@ const users = {
     getOne: async (id) => await axios.get(`${baseURL}/users/${id}`),
     login (user){
         return axios.post(baseURL+ '/login', user)
-    }
+    },
+    register: (item) => {
+        return axios.post(`${baseURL}/register`, item)
+       },
+}
+
+const mensajes = {
+    getAllByUser: async (id) => await axios.get(`${baseURL}/mensajes?userId=${id}`),
 }
 
 const valoraciones = {
     getAllByUser: async (id) => await axios.get(`${baseURL}/valoraciones/${id}`),
+    getByUserRecibidas: async (id) => await axios.get(`${baseURL}/valoraciones?userId=${id}`),
+    getByUserHechas: async (id) => await axios.get(`${baseURL}/valoraciones?valorador=${id}`),
 }
 
 axios.interceptors.request.use((config) => {
@@ -85,5 +102,5 @@ axios.interceptors.response.use((response) => {
 })
 
 export default{
-    products, categories, etiquetas, users, valoraciones
+    products, categories, etiquetas, users, valoraciones, mensajes
 }

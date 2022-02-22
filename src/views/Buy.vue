@@ -11,26 +11,7 @@
             </div>
         </div>
         <div class="container-fluid">
-        <div class="row px-xl-5">
-            <div class="col-lg-8">
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Datos Dirección</span></h5>
-                <div class="bg-light p-30 mb-5">
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>Nombre</label>
-                            <input class="form-control" type="text" placeholder="John">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>E-mail</label>
-                            <input class="form-control" type="text" placeholder="example@email.com">
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <label>Ubicacion</label>
-                            <input class="form-control" type="text" placeholder="123 Street">
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="row px-xl-5" style="justify-content:center;">
             <div class="col-lg-4">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Factura Total</span></h5>
                 <div class="bg-light p-30 mb-5">
@@ -51,25 +32,26 @@
                 <div class="mb-5">
                     <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Pagos</span></h5>
                     <div class="bg-light p-30">
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="paypal">
-                                <label class="custom-control-label" for="paypal">Paypal</label>
+                        <ValidationObserver  v-slot="{ invalid }">
+                        <form  @submit.prevent="sendForm">
+                            <div class="form-group">
+                            <div>
+                                 <ValidationProvider rules="required" name="choice" v-slot="{ errors }">
+                                <select v-model="producto.pago" class="custom-control custom-select" >
+                                    <option   :value="undefined" name="payment" id="paypal">--Selecciona un metodo de pago--</option>
+                                    <option   value="1" name="payment" id="paypal">Paypal</option>
+                                    <option  value="2" name="payment" id="directcheck">Bizum</option>
+                                    <option  value="3" name="payment" id="banktransfer">Transferencia</option>
+                                </select>
+                                <span class="text-danger">{{ errors[0] }}</span>
+                                </ValidationProvider>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="directcheck">
-                                <label class="custom-control-label" for="directcheck">Bizum</label>
-                            </div>
-                        </div>
-                        <div class="form-group mb-4">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
-                                <label class="custom-control-label" for="banktransfer">Tarjeta</label>
-                            </div>
-                        </div>
-                        <button class="btn btn-block btn-primary font-weight-bold py-3">Place Order</button>
+                            
+                        <button type="submit" :disabled="invalid" class="btn btn-block btn-primary font-weight-bold py-3">Place Order</button>
+                        </form>
+                        </ValidationObserver>
+                        
                     </div>
                 </div>
             </div>
@@ -81,14 +63,38 @@
 
 <script>
 import Api from '../Api'
+import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import { extend } from 'vee-validate';
+import { required,oneOf } from 'vee-validate/dist/rules';
+import { configure } from 'vee-validate';
+
+configure({
+  classes: {
+    valid: 'is-valid',
+    invalid: 'is-invalid',
+    dirty: ['is-dirty', 'is-dirty'], // multiple classes per flag!
+    // ...
+  }
+})
+extend('oneOf ', {
+  ...oneOf ,
+  message: 'Choose one'
+});
+extend('required', {
+  ...required,
+  message: 'Este campo es obligatorio'
+});
 
 export default {
     data(){
         return{
-            producto:{}
+            producto:{},
+        
         }
     },
-    props:['producto_id'],
+    components:{
+        ValidationProvider, ValidationObserver
+    },
     async mounted(){
         try {
             let product = await Api.products.getOne(this.$route.params.id)
@@ -97,6 +103,25 @@ export default {
             console.error(error)
         }
     },
+    methods:{
+        async sendForm(){
+            let newProduct = {
+                comprador_id: this.$store.state.user.id,
+                id: this.producto.id,
+                }
+                console.log(newProduct)
+            try {
+                let response = await Api.products.modify(newProduct)
+                console.log(response)
+                if(response.status == 200){
+                    this.$router.push('/valorar')
+                }
+            } catch (error) {
+                console.error(error)
+            }
+           console.log(this.producto)
+        }
+    }
 
 }
 </script>
