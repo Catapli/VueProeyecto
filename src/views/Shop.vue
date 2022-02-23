@@ -127,6 +127,7 @@ export default {
               this.$store.commit('setFiltrosPrecio','')
               this.$store.commit('setFiltrosCategoria','')
               this.$store.commit('setFiltrosEtiqueta','')
+              //this.$store.commit('setFiltrosUbi','')
         },
         getPreviousPage(){
             if(this.paginaActual > 1){
@@ -158,10 +159,19 @@ export default {
             if(this.filtrosPrecio != ''){
                 filtrado.precio = this.filtrosPrecio
             }
+            /* if(this.filtrosUbi != ''){
+                filtrado.ubi = {
+                    distancia: this.filtrosUbi,
+                    lat: this.$store.state.user.ubicacion.lat,
+                    lng: this.$store.state.user.ubicacion.lng
+                }
+            } */
+            console.log(filtrado)
             try {
                  let response = await Api.products.filter(1,filtrado)
                  this.products = []
                  this.products = response.data
+                 console.log(response.data)
                  if(this.products.data === undefined ){
                      this.existencias = true
                  }else{
@@ -184,6 +194,9 @@ export default {
         filtrosCategoria (){
               return this.$store.state.filtro.categoria
         },
+        /* filtrosUbi (){
+              return this.$store.state.filtro.ubi
+        }, */
     },
     watch:{ 
         filtrosEtiqueta(){
@@ -196,6 +209,9 @@ export default {
         filtrosCategoria(){
             this.checkFiltros()
         },
+        /* filtrosUbi(){
+            this.checkFiltros()
+        }, */
     },
     name:'Shop',
     components:{

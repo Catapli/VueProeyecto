@@ -14,7 +14,6 @@
                         </div>
                         <small class="pt-1">({{valoraciones.count}} Reseñas)</small>
                     </div>
-                    <google-map :key="user.ubicacion" :ubicacion="user.ubicacion"></google-map>
                 </div>
             </div>
             
@@ -44,10 +43,9 @@
 
 <script>
 import Api from '../Api'
-import GoogleMap from './GoogleMap.vue'
 import NewRowValoraciones from './NewRowValoraciones.vue'
 export default {
-  components: { NewRowValoraciones, GoogleMap },
+  components: { NewRowValoraciones },
     name:'VendedorDetalles',
     data(){
         return{
@@ -58,6 +56,7 @@ export default {
         }
     },
     methods:{
+
         async getReseñas(){
             let response = await Api.valoraciones.getAllByUser(this.$route.params.id)
             if(response.data.average % 1 != 0 ){

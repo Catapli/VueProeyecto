@@ -41,14 +41,11 @@
                 >
               </div>
             </div>
-            <div class="col-md-4 mb-5">
+            <div class="col-md-4 mb-5" v-if="userLoged">
               <h5 class="text-secondary text-uppercase mb-4">Mi cuenta</h5>
               <div class="d-flex flex-column justify-content-start">
-                <a class="text-secondary mb-2" href="#">Nombre</a>
-                <a class="text-secondary mb-2" href="#">Dato personal</a>
-                <a class="text-secondary mb-2" href="#">Dato personal</a>
-                <a class="text-secondary mb-2" href="#">Dato personal</a>
-                <a class="text-secondary mb-2" href="#">Dato personal</a>
+                <a class="text-secondary mb-2" href="#">{{this.$store.state.user.name}}</a>
+                <a class="text-secondary mb-2" href="#">{{this.$store.state.user.email}}</a>
               </div>
             </div>
             <div class="col-md-4 mb-5">
@@ -110,6 +107,12 @@
 
 
 export default {
-    name:'FooterBottom'
+    name:'FooterBottom',
+    computed:{
+      userLoged(){
+        return !!this.$store.state.token
+      }
+    }
+
 }
 </script>

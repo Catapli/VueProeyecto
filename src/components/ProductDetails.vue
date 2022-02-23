@@ -39,7 +39,7 @@
                     <small>Valoracion del Usuario</small>
                     <div class="d-flex mb-3" style="justify-content:center;">
                         <div class="text-primary mr-2">
-                            <small class="fas fa-star" v-for="valoration in valoracionUser.average" :key="valoration"></small>
+                            <small class="fas fa-star" v-for="valoration in valoracionUser.average" :key="valoration.id"></small>
                             <small class="bi bi-star-half" v-if="!entero"></small>
                         </div>
                         <small class="pt-1">({{valoracionUser.count}} Reviews)</small>
@@ -50,6 +50,9 @@
                     </p>
                     <div class="d-flex align-items-center mb-4 pt-2" style="justify-content:center;">
                         <button class="btn btn-primary px-3" @click="goBuy"><i class="fa fa-shopping-cart mr-1"></i> Comprar</button>
+                    </div>
+                    <div v-if="!denunciado" class="d-flex align-items-center mb-4 pt-2" style="justify-content:center;">
+                        <button class="btn btn-primary px-3" @click="denunciar"><i class="bi bi-exclamation-triangle"></i> Denunciar</button>
                     </div>
                     <div class="d-flex pt-2"  style="justify-content:center;">
                         <strong class="text-dark mr-2">Vendedor:</strong>
@@ -68,7 +71,7 @@
                 <div class="bg-light p-30">
                     <div class="nav nav-tabs mb-4">
                         <a class="nav-item nav-link text-dark" v-bind:class="{active: lista}" @click="changeLista" id="tab-pane-1" data-toggle="tab">Descripción</a>
-                        <a class="nav-item nav-link text-dark" v-bind:class="{active: !lista}" @click="changeLista" id="tab-pane-2" data-toggle="tab">Reseñas</a>
+                        <a class="nav-item nav-link text-dark" v-bind:class="{active: !lista}" @click="changeLista" id="tab-pane-2" data-toggle="tab">Comentarios</a>
                     </div>
                     <div class="tab-content">
                         <div v-if="lista">
@@ -78,50 +81,18 @@
                         <div v-else class="active" >
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h4 class="mb-4">1 review for {{producto.nombre}}</h4>
-                                    <div class="media mb-4">
-                                        <img src="../assets/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
-                                        <div class="media-body">
-                                            <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
-                                            <div class="text-primary mb-2">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star-half-alt"></i>
-                                                <i class="far fa-star"></i>
-                                            </div>
-                                            <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
-                                        </div>
-                                    </div>
+                                    <h4 class="mb-4">Mensaje/s para {{producto.nombre}}</h4>
+                                    <comentario v-for="comentario in mensajes" :key="comentario.id" :message="comentario"></comentario>
                                 </div>
                                 <div class="col-md-6">
-                                    <h4 class="mb-4">Leave a review</h4>
-                                    <small>Your email address will not be published. Required fields are marked *</small>
-                                    <div class="d-flex my-3">
-                                        <p class="mb-0 mr-2">Your Rating * :</p>
-                                        <div class="text-primary">
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                        </div>
-                                    </div>
-                                    <form>
+                                    <h4 class="mb-4">Deja un Comentario</h4>
+                                    <form @submit.prevent="dejarComentario">
                                         <div class="form-group">
-                                            <label for="message">Your Review *</label>
-                                            <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="name">Your Name *</label>
-                                            <input type="text" class="form-control" id="name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="email">Your Email *</label>
-                                            <input type="email" class="form-control" id="email">
+                                            <label for="message">Tu comentario *</label>
+                                            <textarea id="message" v-model="message" cols="30" rows="5" class="form-control"></textarea>
                                         </div>
                                         <div class="form-group mb-0">
-                                            <input type="submit" value="Leave Your Review" class="btn btn-primary px-3">
+                                            <input type="submit" value="Deja tu comentario" class="btn btn-primary px-3">
                                         </div>
                                     </form>
                                 </div>
@@ -141,20 +112,53 @@
 
 <script>
 import Api from '../Api'
+import Comentario from './Comentario.vue'
 export default {
     data(){
         return{
+ 
             user: {},
-            valoracionUser : [],
+            valoracionUser : {},
             producto: {},
             entero: true,
             charge: true,
-            lista: true
+            lista: true,
+            message:'',
+            mensajes:[],
+            denunciado:false
         }
     },
+    components:{      Comentario     },
     name:'ProductDetails',
     props:['producto_id'],
     methods:{
+        async denunciar(){
+            let denuncia = {
+                    user_id : localStorage.getItem('idUser'),
+                    product_id: this.producto.id
+                }
+            try {
+                if(!this.denunciado){
+                    console.log("entra")
+                    let response = await Api.denunciasA.create(denuncia)
+                    if(response.status == 201){
+                        this.denunciado = true
+                    }
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        async getDenuncia(){
+            let denuncia = {
+                    userId : this.$store.state.user.id  ,
+                    productId: this.producto.id
+                }
+                let response = await Api.denunciasA.existe(denuncia)
+                this.denunciado = response.data
+                console.log(this.denunciado)
+
+        },
         changeLista(){
             if(this.lista){
                 this.lista = false
@@ -169,42 +173,44 @@ export default {
         goDetails(){
             this.$router.push('/vendorDetails/'+this.user.id)
         },
-        async getUser(){
+        async getMessages(){
             try {
-                let usuario = await Api.users.getOne(this.producto.user_id)
-                this.user = usuario.data
-                this.getValoraciones()
-            } catch (error) {
-            console.error(error)
-            }
-        },
-        async getProduct(){
-            try {
-                let product = await Api.products.getOne(this.producto_id)
-                this.producto = product.data
-                this.getUser()
+                let response = await Api.mensajes.getAllByProduct(this.producto_id)
+                this.mensajes = response.data
             } catch (error) {
                 console.error(error)
             }
         },
-        async getValoraciones(){
-            try {
-                let valoraciones = await Api.valoraciones.getAllByUser(this.user.id)
-                this.valoracionUser = valoraciones.data
-                if(valoraciones.data.average % 1 != 0 ){
-                    this.entero = false
-                    let num = Math.floor(valoraciones.data.average)
-                    this.valoracionUser.average = num
-                }else{
-                    this.valoracionUser.average = valoraciones.data
+        async dejarComentario(){
+            const that = this
+            let newMessage = {
+                    emisor_id: localStorage.getItem('idUser'),
+                    receptor_id: this.user.id,
+                    product_id: this.producto.id,
+                    contenido: this.message
                 }
+
+            try {
+                let response = await Api.mensajes.create(newMessage)
+                that.mensajes.mensajes.push(response.data)
+                console.log(response)
             } catch (error) {
                 console.error(error)
             }
         }
     },
     async mounted(){
-        await this.getProduct()
+        try {
+            let response = await Api.products.detalles(this.$route.params.id)
+            this.producto = response.data.products[0]
+            this.user = response.data.user[0]
+            this.valoracionUser.average = response.data.valoracion
+            this.valoracionUser.count = response.data.conteo
+            this.getDenuncia()
+        } catch (error) {
+            console.error(error)
+        }
+        await this.getMessages()
         this.charge = false
     },
     

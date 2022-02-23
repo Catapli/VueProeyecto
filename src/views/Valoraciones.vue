@@ -20,7 +20,7 @@
                         <div v-if="lista">
                             <h4 class="mb-3"> </h4>
                             <div class="col-md-6">
-                                    <h4 class="mb-4">Total de {{this.valoracionesHechas.count}} reseñas recibidas</h4>
+                                    <h4 class="mb-4">Total de {{this.valoracionesRecibidas.count}} reseñas recibidas</h4>
                                     <valoracion  v-for="valoracion in valoracionesRecibidas.valoracion " :key="valoracion.id" :valoracion="valoracion"></valoracion>
                                 </div>
                         </div>

@@ -109,17 +109,14 @@ export default {
                 comprador_id: this.$store.state.user.id,
                 id: this.producto.id,
                 }
-                console.log(newProduct)
             try {
                 let response = await Api.products.modify(newProduct)
-                console.log(response)
                 if(response.status == 200){
-                    this.$router.push('/valorar')
+                    this.$router.push('/valorar/'+this.producto.id)
                 }
             } catch (error) {
                 console.error(error)
             }
-           console.log(this.producto)
         }
     }
 

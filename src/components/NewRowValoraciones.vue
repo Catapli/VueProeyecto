@@ -27,7 +27,6 @@ export default {
     },
     methods:{
         goPerfil(){
-            console.log(this.user.id)
             this.$router.replace('/vendorDetails/'+ this.user.id)
         }
     },

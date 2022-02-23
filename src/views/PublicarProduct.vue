@@ -84,7 +84,6 @@ export default {
     },
     methods: {
     submit() {
-        console.log()
        this.product.userId = this.$store.state.user.id
        this.$store.dispatch('newProduct',this.product)
     },

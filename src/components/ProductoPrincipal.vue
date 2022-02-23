@@ -5,7 +5,6 @@
                         <img class="img-fluid w-100" src="../assets/img/product-1.jpg" alt="">
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square" @click="goBuy"><i class="fa fa-shopping-cart" style="color:black;"></i></a>
-                            <a class="btn btn-outline-dark btn-square" ><i class="far fa-heart" style="color:black;"></i></a>
                             <a class="btn btn-outline-dark btn-square"  @click="goDetails" ><i class="fa fa-search" style="color:black;" ></i></a>
                         </div>
                     </div>

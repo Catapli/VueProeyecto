@@ -11,7 +11,8 @@ export default new Vuex.Store({
     filtro:{
       categoria:'',
       etiqueta:'',
-      precio:''
+      precio:'',
+      ubi:''
     },
     user:{},
     token:'',
@@ -29,6 +30,9 @@ export default new Vuex.Store({
     },
     setFiltrosPrecio(state, payload){
       state.filtro.precio = payload;
+    },
+    setFiltrosUbi(state, payload){
+      state.filtro.ubi = payload;
     },
     clearFiltros(){
       this.state.filtro.splice(0,this.state.filtro.length)
@@ -92,6 +96,14 @@ export default new Vuex.Store({
       await Api.products.create(product)
       router.push('/')
       
+    } catch (error) {
+      alert(error.message)
+    }
+  },
+  async valoracion(context,valoracion) {
+    try {
+      await Api.valoraciones.create(valoracion)
+      router.push('/')
     } catch (error) {
       alert(error.message)
     }

@@ -47,10 +47,12 @@ export default {
   components: { TopBar, NavBar,FooterBottom },
    async mounted(){
     this.$store.dispatch('getAllCategories')
-    if(localStorage.getItem('token')){
+    if(localStorage.getItem("token")){
+      if(localStorage.getItem('token') != "undefined"){
       try {
-         let usuario = await Api.users.getOne(localStorage.getItem('idUser'))
+        let usuario = await Api.users.getOne(localStorage.getItem('idUser'))
         this.$store.state.user = usuario.data
+        this.$store.state.user.ubicacion = this.getUbi(usuario.data.ubicacion)
         this.$store.state.token = localStorage.getItem('token')
       } catch (error) {
         console.error(error)
@@ -58,6 +60,18 @@ export default {
      
     }
     }
+    },
+    methods:{
+      getUbi(ubi){
+        let separator = ubi.split(',')
+        let ubicacion= {
+          lat: parseFloat(separator[0]),
+          lng: parseFloat(separator[1])
+        }
+        return ubicacion
+      }
+    }
+    
     }
 </script>
 

@@ -1,5 +1,35 @@
 <template>
             <div class="col-lg-3 col-md-4" v-scrollanimation >
+               <!-- <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filtrar por Distancia</span></h5>
+                <div class="bg-light p-4 mb-30">
+                    <form>
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                            <input type="radio" name="ubi" v-model.number="filtroUbi" value="50" class="custom-control-input" id="ubi">
+                            <label class="custom-control-label" for="ubi">50km</label>
+                            
+                        </div>
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                            <input type="radio" name="ubi" v-model.number="filtroUbi" value="100" class="custom-control-input" id="ubi-1">
+                            <label class="custom-control-label" for="ubi-1">100km</label>
+                            
+                        </div>
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                            <input type="radio" name="ubi" v-model.number="filtroUbi" value="250" class="custom-control-input" id="ubi-2">
+                            <label class="custom-control-label" for="ubi-2">250km</label>
+                            
+                        </div>
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                            <input type="radio" name="ubi" v-model.number="filtroUbi" value="500" class="custom-control-input" id="ubi-3">
+                            <label class="custom-control-label" for="ubi-3">500km</label>
+                            
+                        </div>
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between">
+                            <input type="radio" name="ubi" v-model.number="filtroUbi" value="1000" class="custom-control-input" id="ubi-5">
+                            <label class="custom-control-label" for="ubi-5">+1000km</label>
+                            
+                        </div>
+                    </form>
+                </div> -->
                 
                 <!-- Price Start -->
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filtrar por Precio</span></h5>
@@ -77,9 +107,11 @@ export default {
             filtroPrice:'',
             filtroEtiqueta:'',
             filtroCategoria:'',
+            // filtroUbi:'',
             charge: true,
         }
     },
+
 
 
     watch:{
@@ -91,7 +123,10 @@ export default {
         },
         filtroCategoria(newValue){
             this.$store.commit('setFiltrosCategoria', newValue)
-        }
+        },
+        //filtroUbi(newValue){
+        //    this.$store.commit('setFiltrosUbi', newValue)
+        //}
     },
     async mounted(){
         try {

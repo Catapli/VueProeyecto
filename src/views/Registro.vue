@@ -42,7 +42,6 @@
                         </form>
                         </ValidationObserver>
                     </div>
-                    <google-map></google-map>
                 </div>
             </div>
 </template>
@@ -52,7 +51,7 @@ import { ValidationObserver } from 'vee-validate';
 import { ValidationProvider } from 'vee-validate';
 import { extend } from 'vee-validate';
 import { required, max, min , email ,confirmed } from 'vee-validate/dist/rules';
-import GoogleMap from '../components/GoogleMap.vue';
+
 
 
 extend('required',{ 
@@ -78,7 +77,7 @@ extend('confirmed', {
 
 export default {
 
-    components:{GoogleMap,ValidationProvider, ValidationObserver},
+    components:{ValidationProvider, ValidationObserver},
     data(){
         return{
             user:{},

@@ -13,6 +13,7 @@ const products = {
     countProductsByCategoria: async (idCategory) => await axios.get(`${baseURL}/products?countCategory=${idCategory}`),
     countProductsByEtiqueta: async (idEtiqueta) => await axios.get(`${baseURL}/products?countEtiqueta=${idEtiqueta}`),
     countProductsByPrecio: async (precio) => await axios.get(`${baseURL}/products?countPrecio=${precio}`),
+    detalles: async(id) => await axios.get(`${baseURL}/products?detalles=`+id),
     getAll: async () => await axios.get(`${baseURL}/products`),
     paginate: async (page) => await axios.get(`${baseURL}/products?page=`+page),
     getOne: async (id) => await axios.get(`${baseURL}/products/${id}`),
@@ -38,7 +39,10 @@ const products = {
         if(filtro.etiqueta){
             url = url+`etiqueta=${filtro.etiqueta}&`
         }
-        console.log(url)
+        if(filtro.ubi){
+            url = url+`lat=${filtro.ubi.lat}&lng=${filtro.ubi.lng}&distancia=${filtro.ubi.distancia}`
+            console.log(url)
+        }
         return await axios.get(url)
     }
  
@@ -60,16 +64,36 @@ const users = {
     register: (item) => {
         return axios.post(`${baseURL}/register`, item)
        },
+    editarPerfil: (item) => {
+        return axios.put(`${baseURL}/editarProfile`, item)
+    }
 }
 
 const mensajes = {
     getAllByUser: async (id) => await axios.get(`${baseURL}/mensajes?userId=${id}`),
+    getAllByProduct: async (id) => await axios.get(`${baseURL}/mensajes?productId=${id}`),
+    create: async (item) => await axios.post(`${baseURL}/newComent`,item)
 }
 
 const valoraciones = {
     getAllByUser: async (id) => await axios.get(`${baseURL}/valoraciones/${id}`),
     getByUserRecibidas: async (id) => await axios.get(`${baseURL}/valoraciones?userId=${id}`),
     getByUserHechas: async (id) => await axios.get(`${baseURL}/valoraciones?valorador=${id}`),
+    create: async (item) => {
+        await axios.post(`${baseURL}/newValoracion`, item)
+       },
+}
+
+const denunciasA = {
+    create: async (item) => await axios.post(`${baseURL}/newDenunciaA`,item),
+    existe: async (item) => 
+     await axios.get(`${baseURL}/denunciasA?userId=${item.userId}&productId=${item.productId}`)
+}
+
+const denunciasM = {
+    create: async (item) => await axios.post(`${baseURL}/newDenunciaM`,item),
+    existe: async (item) => 
+     await axios.get(`${baseURL}/denunciasM?user_id=${item.user_id}&mensaje_id=${item.mensaje_id}`)
 }
 
 axios.interceptors.request.use((config) => {
@@ -88,7 +112,6 @@ axios.interceptors.response.use((response) => {
     if (error.response) {
         switch (error.response.status) {
             case 401:
-                console.log(this.$router.path)
                 store.commit('logoutUser')
                 if (this.$router.path !== '/login') {
                     this.$router.replace({
@@ -102,5 +125,5 @@ axios.interceptors.response.use((response) => {
 })
 
 export default{
-    products, categories, etiquetas, users, valoraciones, mensajes
+    products, categories, etiquetas, users, valoraciones, mensajes,denunciasA,denunciasM
 }
